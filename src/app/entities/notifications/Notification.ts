@@ -1,4 +1,6 @@
-import { NotificationContent } from './notification-content';
+import { randomUUID } from 'crypto';
+import { Replace } from 'src/app/helpers/Replace';
+import { NotificationContent } from './NotificationContent';
 
 export interface INotification {
   content: NotificationContent;
@@ -9,10 +11,19 @@ export interface INotification {
 }
 
 export class Notification {
+  private _id: string;
   private props: INotification;
 
-  constructor(props: INotification) {
-    this.props = props;
+  constructor(props: Replace<INotification, { created_at?: Date }>) {
+    this._id = randomUUID();
+    this.props = {
+      ...props,
+      created_at: props.created_at ?? new Date(),
+    };
+  }
+
+  public get id(): string {
+    return this._id;
   }
 
   public get receiver_id(): string {
