@@ -6,6 +6,7 @@ export interface INotification {
   content: NotificationContent;
   category: string;
   read_at?: Date | null;
+  canceled_at?: Date | null;
   created_at: Date;
   receiver_id: string;
 }
@@ -14,8 +15,11 @@ export class Notification {
   private _id: string;
   private props: INotification;
 
-  constructor(props: Replace<INotification, { created_at?: Date }>) {
-    this._id = randomUUID();
+  constructor(
+    props: Replace<INotification, { created_at?: Date }>,
+    id?: string,
+  ) {
+    this._id = id ?? randomUUID();
     this.props = {
       ...props,
       created_at: props.created_at ?? new Date(),
@@ -54,8 +58,20 @@ export class Notification {
     return this.props.read_at;
   }
 
-  public set read_at(read_at: Date | null | undefined) {
-    this.props.read_at = read_at;
+  public read() {
+    this.props.read_at = new Date();
+  }
+
+  public unread() {
+    this.props.read_at = null;
+  }
+
+  public get canceled_at(): Date | null | undefined {
+    return this.props.canceled_at;
+  }
+
+  public cancel() {
+    this.props.canceled_at = new Date();
   }
 
   public get created_at(): Date {
